@@ -1,4 +1,4 @@
-using WordCombinationFinder;
+using XLetterWordChallenge;
 
 namespace TestProject1
 {
@@ -29,14 +29,18 @@ namespace TestProject1
         public void FindWordCombinations_ThreeWords_MakeOneCombination()
         {
             //Arrange
-            List<string> words = ["pen", "penpen","pen"];
+            List<string> words = ["pen", "penpan","pan"];
             int combinationLength = 6;
+
             //Act
             var combinations = Program.FindWordCombinations(words, combinationLength);
+
             //Assert
             Assert.IsNotNull(combinations);
-            Assert.AreEqual(2, combinations.Count);
-            CollectionAssert.Contains(combinations, "pen + pen = penpen");
+            Assert.AreEqual(1, combinations.Count);
+            CollectionAssert.Contains(combinations, "pen + pan = penpan");
+            CollectionAssert.DoesNotContain(combinations, "pan + pen = panpen");
+
         }
     }
 }

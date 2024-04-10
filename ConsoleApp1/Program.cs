@@ -1,33 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
-
-namespace WordCombinationFinder
+﻿namespace XLetterWordChallenge
 {
     public class Program
     {
         static void Main(string[] args)
         {
-            string sourceInputData = "input.txt";
+            string sourceInputData = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "input.txt");
+
             int combinationLength = 6;
 
             List<string> words = ReadWordsFromFile(sourceInputData);
             List<string> wordCombinations = FindWordCombinations(words, combinationLength, 200);
 
 
-            Console.WriteLine("6-Letter Words:");
-            // DisplayWordsInRows(words, 20);
-            DisplayWordsInRows(words.Where(word => word.Length == 6).ToList(), 20);
+            Console.WriteLine($"{combinationLength}-Letter Words:");
+            DisplayWordsInRows(words.Where(word => word.Length == 6).ToList(), 14, true);
 
             Console.WriteLine("\nCombinations:");
-            // List<string> vallidCombinations = FilterValidCombinations(wordCombinations, words);
-            List<string> uniquevallidCombinations = FilterValidCombinations(wordCombinations, true);
-
-            DisplayWordsInRows(uniquevallidCombinations, 10);
+            DisplayWordsInRows(wordCombinations, 5, true);
 
             Console.ReadLine();
 
@@ -82,24 +71,22 @@ namespace WordCombinationFinder
         {
             if (word1 == "" || word2 == "") return false;
 
-            string combination1 = word1 + word2;
-            string combination2 = word2 + word1;
+            string combination = word1 + word2;
 
-            return words.Contains(combination1) && combination1.Length == combinationLength || words.Contains(combination2) && combination2.Length == combinationLength;
+            return words.Contains(combination) && combination.Length == combinationLength;
         }
 
-        public static void DisplayWordsInRows(List<string> words, int wordsPerRow)
+        public static void DisplayWordsInRows(List<string> words, int wordsPerRow, bool unique = false)
         {
+            if(unique)
+            {
+                words = words.Distinct().ToList();
+            }
+
             for (int i = 0; i < words.Count; i += wordsPerRow)
             {
                 Console.WriteLine(string.Join("\t", words.Skip(i).Take(wordsPerRow)));
             }
-        }
-
-        public static List<string> FilterValidCombinations(List<string> combinations, bool unique = false)
-        {
-
-            return !unique ? combinations : combinations.Distinct().ToList();
         }
     }
 }
