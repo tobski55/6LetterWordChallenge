@@ -4,7 +4,9 @@
     {
         static void Main(string[] args)
         {
-            string sourceInputData = "..\\..\\..\\..\\input.txt";
+            string sourceInputData = "..\\input.txt";
+            //for debugging purposes
+            //string sourceInputData = "..\\..\\..\\..\\input.txt";
 
             int combinationLength = 6;
 

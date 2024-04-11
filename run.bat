@@ -1,4 +1,5 @@
 #!/bin/bash
 
 dotnet build
-dotnet run --project .\ConsoleApp1\6LetterWordChallenge.csproj
+cd ConsoleApp1
+dotnet run --project 6LetterWordChallenge.csproj
