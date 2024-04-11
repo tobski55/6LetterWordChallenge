@@ -4,7 +4,7 @@
     {
         static void Main(string[] args)
         {
-            string sourceInputData = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "input.txt");
+            string sourceInputData = "..\\..\\..\\..\\input.txt";
 
             int combinationLength = 6;
 
