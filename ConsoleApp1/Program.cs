@@ -11,11 +11,11 @@
             int combinationLength = 6;
 
             List<string> words = ReadWordsFromFile(sourceInputData);
-            List<string> wordCombinations = FindWordCombinations(words, combinationLength, 200);
+            List<string> wordCombinations = FindWordCombinations(words.OrderByDescending(word => word.Length).ToList(), combinationLength, 100);
 
 
             Console.WriteLine($"{combinationLength}-Letter Words:");
-            DisplayWordsInRows(words.Where(word => word.Length == 6).ToList(), 14, true);
+            DisplayWordsInRows(words.Where(word => word.Length == combinationLength).ToList(), 14, true);
 
             Console.WriteLine("\nCombinations:");
             DisplayWordsInRows(wordCombinations, 5, true);
@@ -32,7 +32,7 @@
             {
                 var lines = sr.ReadToEnd().Split().ToList();
                 foreach (var line in lines)
-                    if (line != null)
+                    if (line != null && line != "")
                     {
                         words.Add(line.Trim());
                     }
@@ -41,41 +41,45 @@
             return words;
         }
 
-        public static List<string> FindWordCombinations(List<string> words,int combinationLength = 6, int amount = 10)
+        public static List<string> FindWordCombinations(List<string> words, int combinationLength = 6, int amount = 10)
         {
             List<string> combinations = new List<string>();
-            int count = 0;
-
-            for (int i = 0; i < words.Count && count < amount; i++)
-            {
-                for (int j = i + 1; j < words.Count && count < amount; j++)
-                {
-                    string combined = words[i] + words[j];
-                    if (IsValidCombination(words[i], words[j], words, combinationLength))
-                    {
-                        combinations.Add($"{words[i]} + {words[j]} = {combined}");
-                        count++;
-                    }
-
-                    combined = words[j] + words[i];
-                    if (IsValidCombination(words[j], words[i], words, combinationLength) && count < amount)
-                    {
-                        combinations.Add($"{words[j]} + {words[i]} = {combined}");
-                        count++;
-                    }
-                }
-            }
-
+            List<string> currentCombination = new List<string>();
+            int foundCount = 0;
+            FindCombinationsRecursive(words, combinationLength, amount, combinations, currentCombination, ref foundCount);
             return combinations;
         }
 
-        public static bool IsValidCombination(string word1, string word2, List<string> words, int combinationLength)
+        private static void FindCombinationsRecursive(List<string> words, int combinationLength, int amount, List<string> combinations, List<string> currentCombination, ref int foundCount)
         {
-            if (word1 == "" || word2 == "") return false;
+            if (foundCount >= amount)
+                return;
 
-            string combination = word1 + word2;
+            if (currentCombination.Sum(word => word.Length) == combinationLength)
+            {
+                string combination = $"{string.Join(" + ", currentCombination)} = {string.Concat(currentCombination)}";
+                if (words.Contains(string.Concat(currentCombination)) && !combinations.Contains(combination) && currentCombination.Count() > 1)
+                {
+                    combinations.Add(combination);
+                    foundCount++;
+                }
+                return;
+            }
 
-            return words.Contains(combination) && combination.Length == combinationLength;
+            if (currentCombination.Sum(word => word.Length) > combinationLength)
+            {
+                return;
+            }
+
+            foreach (string word in words)
+            {
+                if (!currentCombination.Contains(word))
+                {
+                    currentCombination.Add(word);
+                    FindCombinationsRecursive(words, combinationLength, amount, combinations, currentCombination, ref foundCount);
+                    currentCombination.RemoveAt(currentCombination.Count - 1); // Backtrack
+                }
+            }
         }
 
         public static void DisplayWordsInRows(List<string> words, int wordsPerRow, bool unique = false)
